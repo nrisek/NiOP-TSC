@@ -1,0 +1,168 @@
+
+//main 
+
+            Racunovodstvo tscRacunovodstvo = Racunovodstvo.getInstance();
+            //Trgovina medjimurka = new ProfiTrgovina();
+            Trgovina medjimurka = new AmaterskaTrgovina();
+            var alat = medjimurka.kupiAlat();
+            Console.WriteLine(alat.kojiAlat());
+
+            Osoba Kreso = new Osoba();
+
+            Nastavnik profKreso = new Nastavnik(Kreso);
+            profKreso.prenesiZnanje(100);
+
+            Sportas sportKreso = new Sportas(Kreso);
+            sportKreso.vjezbaj(200);
+--------
+
+
+
+
+
+
+
+
+    /*računalna provjera znanja*/
+
+        //jedinstveni objekt
+    public class Racunovodstvo {
+        private int iznosNaRacunu = 1000;
+        private static Racunovodstvo instanca=null;
+        private Racunovodstvo() {
+            ;
+        }
+        public static Racunovodstvo getInstance() {
+            if (instanca == null)
+                instanca = new Racunovodstvo();
+            return instanca;
+        }
+
+        bool isplatiNovac(int n) {
+            if (iznosNaRacunu - n < 0)
+                return false;
+            iznosNaRacunu -= n;
+            return false;
+        }
+    }
+
+    //apstraktna tvornica
+    abstract class Alat {
+        protected string tip;
+        public abstract string kojiAlat();
+    }
+
+    //produkti
+    class ProfiAlat : Alat {
+        public ProfiAlat() {
+            tip = "profi alat";
+        }
+        public override string kojiAlat() {
+            return tip;
+        }
+
+    }
+
+    class AmaterskiAlat : Alat {
+        public AmaterskiAlat() {
+            tip = "amaterski alat";
+        }
+        public override string kojiAlat() {
+            return tip;
+        }
+    }
+
+    //apstraktna tvornica
+    abstract class Trgovina {
+        public abstract Alat kupiAlat();
+    }
+    class ProfiTrgovina : Trgovina {
+        public override Alat kupiAlat() {
+            return new ProfiAlat();
+        }
+    }
+
+    class AmaterskaTrgovina : Trgovina {
+        public override Alat kupiAlat() {
+            return new AmaterskiAlat();
+        }
+    }
+
+    //dekorator
+    
+    abstract class ZivoBice {
+        public int energija = 0;
+        public abstract string ispisi();
+
+    }
+
+    class Osoba : ZivoBice {
+        public override string ispisi() {
+            return energija.ToString();
+        }
+    }
+
+    abstract class DecoratorNastavnik : ZivoBice {
+        protected ZivoBice kogaProsirujemo;
+ 
+        public abstract void prenesiZnanje(int n);
+
+    }
+
+    abstract class DekoratorSportas : ZivoBice {
+        protected ZivoBice kogaProsirujemo;
+
+        public abstract void vjezbaj(int n);
+    }
+
+    class Sportas : DekoratorSportas {
+        public Sportas(ZivoBice _zb) {
+            kogaProsirujemo = _zb;
+        }
+        public override string ispisi() {
+            return "Sportas:" + kogaProsirujemo.energija.ToString();
+        }
+
+        public override void vjezbaj(int n) {
+            kogaProsirujemo.energija += n;
+        }
+    }
+
+    class Nastavnik : DecoratorNastavnik {
+        public Nastavnik(ZivoBice _zb) {
+            kogaProsirujemo = _zb;
+        }
+        public override string ispisi() {
+            return "Sportas:" + kogaProsirujemo.energija.ToString();
+        }
+
+        public override void prenesiZnanje(int n) {
+            kogaProsirujemo.energija -= n;
+        }
+    }
+
+    //adapter
+    //ciljno sucelje
+    interface VanjskiSustav {
+        public bool posaljiPrijavu(string s);
+    }
+    //vanjska komponenta
+    class MinistarstvoUprave : VanjskiSustav {
+        public bool posaljiPrijavu(string s) {
+            Console.Write("ministarstvo uprave DD.MM.YYYY-HRK" + s);
+            return true;
+        }
+    }
+
+    class Adapter:VanjskiSustav{
+        private VanjskiSustav vs;
+        public Adapter(VanjskiSustav _vs) {
+            vs = _vs;
+        }
+
+        public bool posaljiPrijavu(string s) {
+            string[] dijelovi = s.Split('.');
+            vs.posaljiPrijavu(dijelovi[1]+ '.'+dijelovi[0]+'.'+dijelovi[3]);
+            return true;
+        }
+    }
