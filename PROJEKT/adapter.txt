@@ -1,0 +1,60 @@
+public class OutputRouterOS
+    {
+        public OutputRouterOS()
+        {
+        }
+
+        public string postaviPrivatnuA(string privA)
+        {
+            return "ip address add address=" + privA + "/24 interface=ether1 \n";
+        }
+        public string postaviJavnuA(string javnA, string portovi)
+        {
+            return "ip address add address=" + javnA + "/24 interface=ether5 \n" +
+                   "ip dhcp-client add interface ether5 disabled=no \n" +
+                   "ip firewall nat add chain=srcnat action=masquerade to-ports " + portovi + " \n" +
+                   "ip dns nat servers=8.8.8.8 \n";
+        }
+        public string postaviKimeILozinku(string korIme, string lozinka)
+        {
+            return "user set " + korIme + " password=" + lozinka + "\n";
+        }
+    }
+
+    public class AdapterZaRouterOS
+    {
+        private OutputRouterOS routeros = new OutputRouterOS();
+        public string komande = "";
+
+        public AdapterZaRouterOS()
+        {
+        }
+
+        public void ispisiKomande(string privA, string javnA, string portovi, string korIme, string lozinka)
+        {
+            komande = "";
+            komande += routeros.postaviPrivatnuA(privA) +
+                       routeros.postaviJavnuA(javnA, portovi) +
+                       routeros.postaviKimeILozinku(korIme, lozinka);
+
+            System.IO.File.WriteAllText(@"D:\Github\WISP\Ispisane komande.txt", komande);
+        }
+
+    }
+
+
+------------------------------------------------------------------------
+
+
+private void buttonGenerirajRouterOS_Click(object sender, EventArgs e)
+        {
+            string privatnaAdresa = textBoxPrivIpA.Text.ToString();
+            string javnaAdresa = textBoxJavnaIpA.Text.ToString();
+            string korisnickoImeUredaj = textBoxKorImeUredaj.Text.ToString();
+            string lozinkaUredaj = textBoxLozinkaUredaj.Text.ToString();
+            string skupPortova = textBoxPortovi.Text.ToString();
+
+            AdapterZaRouterOS adapter = new AdapterZaRouterOS();
+            adapter.ispisiKomande(privatnaAdresa, javnaAdresa, skupPortova, korisnickoImeUredaj, lozinkaUredaj);
+
+        }

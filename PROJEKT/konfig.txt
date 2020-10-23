@@ -1,0 +1,11 @@
+Skripta mora imati:
+PrivatniP - 192.168.100.0/24 (ether1)
+Korisnicko ime, lozinka
+Javna IP adresa, port prema internetu
+Adresa ether2 - 192.168.1.0/24)
+
+ip address add address=192.168.100.1/24 interface=ether1
+system identity set name=IME
+password new-password=LOZINKA
+ip address add address=192.168.1.0/24 interface=ether2
+ip firewall nat add chain=srcnat action=masquerade out-interface=ether1

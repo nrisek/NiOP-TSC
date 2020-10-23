@@ -1,0 +1,74 @@
+SQL QUERY
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE Uloge (
+    ID int NOT NULL,
+    naziv varchar(20) NOT NULL,
+    PRIMARY KEY (ID)
+);
+****************************
+INSERT INTO Uloge (id, naziv) VALUES (1,'Admin'),(2,'Korisnik'),(3,'Nitko');
+*******************************************************************
+CREATE TABLE Korisnicki_podaci (
+    ID int NOT NULL,
+    ime Varchar(20),
+    prezime Varchar(20),
+	korisnicko_ime Varchar(20),
+	lozinka Varchar(20),
+	ID_uloge int NOT NULL,
+    PRIMARY KEY (ID),
+    FOREIGN KEY (ID_Uloge) REFERENCES Uloge(ID)
+);
+********************************************
+CREATE TABLE Racuni (
+    ID int NOT NULL,
+    Naziv varchar(20) NOT NULL,
+    id_korisnika int,
+	placeno BIT,
+    PRIMARY KEY (ID),
+	FOREIGN KEY (id_korisnika) REFERENCES Korisnicki_podaci(ID)
+);
+***************************************************************
+CREATE TABLE Opceniti_uredaj (
+    ID int NOT NULL,
+    naziv varchar(255) NOT NULL,
+    broj_ethernet_portova int,
+    poveznica_na_web Varchar(255),
+    PRIMARY KEY (ID)
+);
+******************************
+CREATE TABLE Pristupne_tocke (
+    ID int NOT NULL,
+    naziv varchar(255) NOT NULL,
+    lokacija varchar(255) NOT NULL,
+    SSID Varchar(255),
+    lozinka varchar(20) NOT NULL,
+    PRIMARY KEY (ID)
+);
+*************************************
+CREATE TABLE Konfiguracije (
+    ID int NOT NULL,
+    id_korisnika int NOT NULL,
+    korisnicko_ime varchar(255) NOT NULL,
+    lozinka Varchar(255),
+	javniIP varchar(255) NOT NULL,
+	skup_portova varchar(255),
+	ID_pristupne_tocke int NOT NULL,
+    PRIMARY KEY (ID),
+	FOREIGN KEY (id_korisnika) REFERENCES Korisnicki_podaci(ID),
+	FOREIGN KEY (ID_pristupne_tocke) REFERENCES Pristupne_tocke(ID)
+);
+*********************************************************************
+NAREDBA ZA PROMJENU AUTO INCREMENTA
+alter table imetablice drop constraint PK_imeTablice;
+alter table imetablice drop column stupacID;
+alter table imetablice add stupacID INT IDENTITY(1,1) primary key;
+***********************************************************************
+INBOKS
+CREATE TABLE Inboks (
+    ID int NOT NULL IDENTITY(1,1) PRIMARY KEY,
+    ID_uloge int NOT NULL,
+    ID_osobe int NOT NULL,
+	tekst Varchar(200),
+    FOREIGN KEY (ID_uloge) REFERENCES Uloge(ID),
+	FOREIGN KEY (ID_osobe) REFERENCES Korisnicki_podaci(ID)
+);
